@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   minWidth="955" minHeight="600">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import by.gramovich.bsu.fivecourse.flex.lab1.*;
+			import by.gramovich.bsu.fivecourse.flex.lab1.controller.Controller;
+			import by.gramovich.bsu.fivecourse.flex.lab1.model.RandomList;
+			[Bindable]
+			private var randomList:RandomList = RandomList.getInstance();
+			
+			private var controller:Controller = new Controller();
+			
+			/**
+			 * Add random number to lists
+			 */
+			private function addRandomNumber():void {
+				controller.addRandomNumber();
+				if (!sortButton.enabled) {
+					sortButton.enabled = true;
+					clearButton.enabled = true;
+				}
+			}
+			
+			/**
+			 * Sort lists
+			 */
+			private function sort():void {
+				controller.sort();
+			}
+			
+			/**
+			 * Clear lists
+			 */
+			private function clear():void {
+				controller.clear();
+				sortButton.enabled = false;
+				deleteButton.enabled = false;
+				clearButton.enabled = false;
+			}
+			
+			/**
+			 * Synchronize lists' selection
+			 */
+			private function syncSelection(listIndex:int):void {
+				if (listIndex == 1) {
+					list2.selectedIndex = list1.selectedIndex;
+				} else {
+					list1.selectedIndex = list2.selectedIndex;
+				}
+				if (!deleteButton.enabled) {
+					deleteButton.enabled = true;
+				}
+			}
+			
+			/**
+			 * Delete item from lists
+			 */
+			private function deleteItem():void {
+				controller.deleteItem(list1.selectedIndex);
+				deleteButton.enabled = false;
+				if (randomList.isEmpty()) {
+					sortButton.enabled = false;
+					clearButton.enabled = false;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<s:HGroup width="900">
+		
+		<s:Panel width="300" height="500" title="List1">
+			<s:List id="list1" width="250" height="450" allowMultipleSelection="false"
+					dataProvider="{randomList.items}" change="syncSelection(1)"/>
+		</s:Panel>
+		<s:Panel width="300" height="500" title="DateChooser">
+			<s:VGroup>
+				
+			<mx:DateChooser change="addRandomNumber()"/>
+			<s:HGroup>
+				<s:Button id="sortButton" click="sort()" enabled="false">Sort</s:Button>
+				<s:Button id="deleteButton" enabled="false" click="deleteItem()">Delete</s:Button>
+				<s:Button id="clearButton" click="clear()" enabled="false">Clear</s:Button>
+			</s:HGroup>
+			</s:VGroup>
+		</s:Panel>
+		<s:Panel width="300" height="500" title="List2">
+			<s:List id="list2" width="250" height="450" allowMultipleSelection="false"
+					dataProvider="{randomList.items}" change="syncSelection(2)"/>
+		</s:Panel>
+		
+	</s:HGroup>
+
+</s:Application>
